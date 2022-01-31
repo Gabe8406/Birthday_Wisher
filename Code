@@ -1,0 +1,52 @@
+import random
+import pandas as pd
+import datetime as dt
+import smtplib
+randoms = ["path of first birthday letter sample",
+           "path of second birthday letter sample",
+           "path of third birthday letter sample"]
+
+#Getting todays date
+todays_month = (dt.datetime.now()).month
+todays_day = (dt.datetime.now()).day
+
+# Reading the data
+df = pd.read_csv("birthday data file path")
+
+#How much lines, to iterate through birthdays
+number_birthdays = len(pd.read_csv("birthday data file path"))
+
+# ***Sending of the File***
+password = 'Password'
+email = "E-Mail"
+
+for x in range (0,number_birthdays):
+
+    if todays_day == (df.iloc[x,4]):
+        # Random letter
+        randy = random.choice(randoms)
+        # Open letter to change header
+        with open(randy, "r") as file:
+            filedata = file.read()
+
+        filedata = filedata.replace("[NAME]",  str(df.iloc[x, 0]))
+
+        with open(randy, "w") as file:
+            file.write(filedata)
+        # #Sending the Email
+        email = str(df.iloc[x, 1])
+        connection = smtplib.SMTP("smtp.gmail.com")
+        connection.starttls()
+        connection.login(user=my_email,password=password)
+        connection.sendmail(from_addr=my_email,to_addrs=email,
+                                msg=f"Subject:Birthday Wishes!\n\n {filedata}")
+        #Header Back to default for next email
+        with open(randy, "r") as file:
+            filedata = file.read()
+
+        filedata = filedata.replace(str(df.iloc[x, 0]), "[NAME]")
+
+        with open(randy, "w") as file:
+            file.write(filedata)
+
+
